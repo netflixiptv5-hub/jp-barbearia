@@ -1,23 +1,22 @@
 FROM oven/bun:1.1 AS build
 WORKDIR /app
 
-# Copy entire monorepo (needed for workspace resolution)
+# Copy entire monorepo
 COPY . .
 
-# Install all deps
+# Install all deps (monorepo workspace)
 RUN bun install
 
 # Build frontend
 WORKDIR /app/packages/web
-RUN bunx vite build 2>&1 || (echo "Build failed" && exit 1)
+RUN bunx vite build
 
 # Production stage
 FROM oven/bun:1.1-slim
 WORKDIR /app
 
-# Copy node_modules and built files
+# Copy everything needed (node_modules at root level for workspace)
 COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/packages/web/node_modules ./packages/web/node_modules
 COPY --from=build /app/packages/web/dist ./packages/web/dist
 COPY --from=build /app/packages/web/src ./packages/web/src
 COPY --from=build /app/packages/web/server.ts ./packages/web/server.ts

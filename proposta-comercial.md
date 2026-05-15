@@ -43,7 +43,7 @@ O que tá incluso:
 🔐 Painel administrativo (dono)
 💈 Painel do barbeiro (cada um gerencia sua agenda)
 📊 Relatórios de faturamento
-🔔 Notificações pro cliente
+🔔 Lembrete via WhatsApp (link direto pro barbeiro)
 🎨 Design 100% personalizado com sua marca
 🛠️ Suporte e atualizações
 

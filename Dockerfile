@@ -1,12 +1,9 @@
-# Cache bust: 2026-05-15-v3-instagram
+# v4-instagram-carmino
 FROM oven/bun:1.1 AS build
 WORKDIR /app
-
-# Force no cache
-ARG CACHEBUST=1
-RUN echo "bust: $CACHEBUST"
-
-# Copy entire monorepo
+COPY package.json bun.lock* ./
+COPY packages/web/package.json ./packages/web/
+RUN bun install
 COPY . .
 
 # Install all deps (monorepo workspace)

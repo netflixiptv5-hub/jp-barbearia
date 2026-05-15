@@ -1,6 +1,10 @@
-# Cache bust: 2026-05-15-v2-og
+# Cache bust: 2026-05-15-v3-instagram
 FROM oven/bun:1.1 AS build
 WORKDIR /app
+
+# Force no cache
+ARG CACHEBUST=1
+RUN echo "bust: $CACHEBUST"
 
 # Copy entire monorepo
 COPY . .

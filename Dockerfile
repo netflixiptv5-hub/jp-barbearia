@@ -1,31 +1,35 @@
-FROM oven/bun:1.1 AS base
+FROM oven/bun:1.1 AS build
 WORKDIR /app
 
-# Install dependencies
-COPY package.json bun.lock ./
-COPY packages/web/package.json packages/web/
-RUN bun install --frozen-lockfile 2>/dev/null || bun install
+# Copy entire monorepo (needed for workspace resolution)
+COPY . .
 
-# Copy source
-COPY packages/web/ packages/web/
-COPY tsconfig.json ./
-COPY .env.template ./.env.template
+# Install all deps
+RUN bun install
 
 # Build frontend
 WORKDIR /app/packages/web
-RUN bunx vite build
+RUN bunx vite build 2>&1 || (echo "Build failed" && exit 1)
 
-# Production
+# Production stage
 FROM oven/bun:1.1-slim
-WORKDIR /app/packages/web
+WORKDIR /app
 
-COPY --from=base /app/node_modules /app/node_modules
-COPY --from=base /app/packages/web/node_modules /app/packages/web/node_modules
-COPY --from=base /app/packages/web/dist /app/packages/web/dist
-COPY --from=base /app/packages/web/src /app/packages/web/src
-COPY --from=base /app/packages/web/server.ts /app/packages/web/server.ts
-COPY --from=base /app/packages/web/package.json /app/packages/web/package.json
-COPY --from=base /app/packages/web/tsconfig.json /app/packages/web/tsconfig.json
+# Copy node_modules and built files
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/packages/web/node_modules ./packages/web/node_modules
+COPY --from=build /app/packages/web/dist ./packages/web/dist
+COPY --from=build /app/packages/web/src ./packages/web/src
+COPY --from=build /app/packages/web/server.ts ./packages/web/server.ts
+COPY --from=build /app/packages/web/package.json ./packages/web/package.json
+COPY --from=build /app/packages/web/tsconfig.json ./packages/web/tsconfig.json
+COPY --from=build /app/packages/web/tsconfig.app.json ./packages/web/tsconfig.app.json
+COPY --from=build /app/packages/web/tsconfig.node.json ./packages/web/tsconfig.node.json
+COPY --from=build /app/packages/web/public ./packages/web/public
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/tsconfig.json ./tsconfig.json
+
+WORKDIR /app/packages/web
 
 EXPOSE 3000
 ENV PORT=3000

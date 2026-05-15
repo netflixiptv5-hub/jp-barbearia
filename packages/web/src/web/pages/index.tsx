@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import {
   Scissors, ChevronLeft, Check, Clock, MapPin,
-  User, Calendar, Star, ChevronRight, MessageCircle
+  User, Calendar, Star, ChevronRight, MessageCircle, Instagram
 } from "lucide-react";
 
 type Service = { id: number; name: string; price: number; duration: number; description: string | null };
@@ -251,11 +251,11 @@ export default function BookingPage() {
         <div style={{ display: "flex", flexDirection: "column" as const, gap: 8 }}>
           <p style={{ color: MUTED, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
             <MapPin style={{ width: 14, height: 14, color: `${GOLD}80` }} />
-            Araraquara, SP
+            Rua Carmino Brambilla, 43
           </p>
           <p style={{ color: MUTED, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
             <Clock style={{ width: 14, height: 14, color: `${GOLD}80` }} />
-            Seg–Sáb • 9h às 20h
+            Seg–Sex 9h–20h • Sáb 8h–19h
           </p>
         </div>
 
@@ -277,10 +277,15 @@ export default function BookingPage() {
           </button>
         </div>
 
-        {/* Logo footer */}
-        <div style={{ marginTop: 32, opacity: 0.3 }}>
-          <img src="/logo.png" alt="JP Barbearia" style={{ width: 40, height: 40, borderRadius: "50%" }} />
-        </div>
+        {/* Instagram */}
+        <a href="https://instagram.com/jpbarbeariabotanico01" target="_blank" rel="noopener" style={{
+          marginTop: 32, display: "flex", alignItems: "center", gap: 8,
+          color: MUTED, textDecoration: "none", fontSize: 13, opacity: 0.6,
+          transition: "opacity 0.3s",
+        }}>
+          <Instagram style={{ width: 18, height: 18 }} />
+          <span>@jpbarbeariabotanico01</span>
+        </a>
       </div>
     </div>,
 

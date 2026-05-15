@@ -179,7 +179,7 @@ export default function BookingPage() {
             {selBarber?.phone && (
               <a
                 href={`https://wa.me/${selBarber.phone}?text=${encodeURIComponent(
-                  `Olá ${selBarber.name}! 👋\n\nAgendei pelo site:\n\n✂️ ${selSvc.map(s => s.name).join(", ")}\n📅 ${fmtDate(selDate)}\n🕐 ${selTime}\n👤 ${name}\n💰 R$ ${price.toFixed(2)}\n\nAté lá! 🤝`
+                  `Ola ${selBarber.name}!\n\nAgendei pelo site:\n\nServico: ${selSvc.map(s => s.name).join(", ")}\nDia: ${fmtDate(selDate)}\nHorario: ${selTime}\nNome: ${name}\nValor: R$ ${price.toFixed(2)}\n\nAte la!`
                 )}`}
                 target="_blank"
                 rel="noopener"

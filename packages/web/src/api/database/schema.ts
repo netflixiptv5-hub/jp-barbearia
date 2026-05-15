@@ -54,3 +54,40 @@ export const settings = sqliteTable("settings", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),
 });
+
+// ─── MULTI-TENANT (Orion Digital Prospecting) ───
+
+export const tenants = sqliteTable("tenants", {
+  slug: text("slug").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category").notNull().default(""), // Restaurant, Barber, etc.
+  address: text("address").default(""),
+  phone: text("phone").default(""), // WhatsApp number
+  accentColor: text("accent_color").notNull().default("#C9A96E"),
+  tagline: text("tagline").default(""),
+  servicesJson: text("services_json").notNull().default("[]"), // JSON array [{name, price, duration}]
+  hours: text("hours").default("Seg–Sex 9h–18h"),
+  logoUrl: text("logo_url").default(""),
+  instagram: text("instagram").default(""),
+  rating: text("rating").default(""),
+  reviews: text("reviews").default(""),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
+export const leads = sqliteTable("leads", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  tenantSlug: text("tenant_slug").notNull(),
+  businessName: text("business_name").notNull(),
+  phone: text("phone").default(""),
+  address: text("address").default(""),
+  category: text("category").default(""),
+  rating: text("rating").default(""),
+  reviews: text("reviews").default(""),
+  googleUrl: text("google_url").default(""),
+  status: text("status").notNull().default("new"), // new, msg_sent, replied, interested, closed, rejected
+  priceOffered: real("price_offered").default(229),
+  msgSentAt: integer("msg_sent_at", { mode: "timestamp" }),
+  notes: text("notes").default(""),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});

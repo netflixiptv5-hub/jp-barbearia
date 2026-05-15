@@ -5,6 +5,7 @@ import * as schema from "./database/schema";
 import { eq, and, desc, sql, gte, lte } from "drizzle-orm";
 
 const ADMIN_PASS = "jp2026";
+const ORION_PASS = "orion2026";
 
 const app = new Hono()
   .basePath("api")
@@ -305,6 +306,67 @@ const app = new Hono()
     ]);
 
     return c.json({ ok: true, message: "Seeded" }, 201);
+  })
+
+  // ─── TENANT: get tenant by slug ───
+  .get("/tenant/:slug", async (c) => {
+    const slug = c.req.param("slug");
+    const tenant = await db.select().from(schema.tenants).where(eq(schema.tenants.slug, slug)).get();
+    if (!tenant) return c.json({ error: "Not found" }, 404);
+    return c.json({ tenant }, 200);
+  })
+
+  // ─── ORION: auth ───
+  .post("/orion/login", async (c) => {
+    const { password } = await c.req.json();
+    if (password === ORION_PASS) return c.json({ ok: true, token: "orion-admin-2026" }, 200);
+    return c.json({ ok: false, error: "Senha incorreta" }, 401);
+  })
+
+  // ─── ORION: list leads ───
+  .get("/orion/leads", async (c) => {
+    const status = c.req.query("status");
+    let rows;
+    if (status) {
+      rows = await db.select().from(schema.leads).where(eq(schema.leads.status, status)).orderBy(desc(schema.leads.createdAt));
+    } else {
+      rows = await db.select().from(schema.leads).orderBy(desc(schema.leads.createdAt));
+    }
+    return c.json({ leads: rows }, 200);
+  })
+
+  // ─── ORION: update lead status ───
+  .patch("/orion/leads/:id", async (c) => {
+    const id = parseInt(c.req.param("id"));
+    const body = await c.req.json();
+    const update: Record<string, any> = {};
+    if (body.status) update.status = body.status;
+    if (body.priceOffered !== undefined) update.priceOffered = body.priceOffered;
+    if (body.notes !== undefined) update.notes = body.notes;
+    if (body.status === "msg_sent") update.msgSentAt = new Date();
+    await db.update(schema.leads).set(update).where(eq(schema.leads.id, id));
+    return c.json({ ok: true }, 200);
+  })
+
+  // ─── ORION: stats ───
+  .get("/orion/stats", async (c) => {
+    const all = await db.select().from(schema.leads);
+    const stats = {
+      total: all.length,
+      new: all.filter(l => l.status === "new").length,
+      msg_sent: all.filter(l => l.status === "msg_sent").length,
+      replied: all.filter(l => l.status === "replied").length,
+      interested: all.filter(l => l.status === "interested").length,
+      closed: all.filter(l => l.status === "closed").length,
+      rejected: all.filter(l => l.status === "rejected").length,
+    };
+    return c.json({ stats }, 200);
+  })
+
+  // ─── ORION: list tenants ───
+  .get("/orion/tenants", async (c) => {
+    const rows = await db.select().from(schema.tenants).orderBy(desc(schema.tenants.createdAt));
+    return c.json({ tenants: rows }, 200);
   });
 
 export type AppType = typeof app;

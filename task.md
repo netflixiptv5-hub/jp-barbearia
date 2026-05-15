@@ -1,17 +1,30 @@
-# JP Barbearia - Task Tracker
+# Multi-Tenant Prospector System
 
-## COMPLETED
-- [x] Railway deploy SUCCESS - live at https://web-production-877b45.up.railway.app/
-- [x] Fixed builder: was RAILPACK, changed to DOCKERFILE via dockerfilePath setting
-- [x] Fixed deploy: was using old commit, used `serviceInstanceDeploy(latestCommit: true)`
-- [x] Updated sales pitch: "Notificações pro cliente" → "Lembrete via WhatsApp (link direto pro barbeiro)"
-- [x] API working: /api/services returns data from Turso DB
+## Architecture
+- Same Turso DB, same Railway deploy
+- `tenants` table stores config per business
+- `leads` table stores prospecting status
+- Frontend reads `:slug` from URL → loads tenant config → renders dynamic booking page
+- JP Barbearia remains at `/` (backward compatible)
+- Demo sites at `/demo/:slug`
+- Orion admin at `/orion`
+- API: `/api/t/:slug/*` for tenant-specific endpoints
 
-## PENDING
-- [ ] User question about notifications - need to explain options
-- [ ] presente-liliane date change to 2026-06-16T00:00:00-03:00
-- [ ] Logo may be blurry at 140x140 (source is 120x120)
+## Tables to Add
+1. `tenants` — slug, name, category, address, phone, accent_color, tagline, services_json, hours, logo_url, instagram, created_at
+2. `leads` — tenant_slug (FK), status (new/msg_sent/replied/interested/closed/rejected), phone, msg_sent_at, notes, price_offered, created_at
 
-## URLS
-- Railway: https://web-production-877b45.up.railway.app/
-- GitHub: https://github.com/netflixiptv5-hub/jp-barbearia
+## Build Order
+- [x] 1. Schema: add tenants + leads tables
+- [ ] 2. API: tenant CRUD + tenant-aware public endpoints  
+- [ ] 3. Frontend: dynamic demo page component (reads tenant config)
+- [ ] 4. Frontend: Orion admin dashboard
+- [ ] 5. Script: demo generator (reads leads JSON → creates tenants)
+- [ ] 6. Script: WhatsApp dispatcher
+- [ ] 7. Deploy + test
+
+## Key Decisions
+- Services stored as JSON in tenant (no per-tenant services table for demos)
+- Demo pages are read-only showcases (no actual booking for demos)
+- Colors auto-generated per category
+- Admin password: "orion2026"

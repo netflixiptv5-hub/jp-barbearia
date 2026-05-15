@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import {
-  Scissors, ChevronLeft, Check, Clock, MapPin, Phone,
-  User, Calendar, Star, Instagram, ChevronRight
+  Scissors, ChevronLeft, Check, Clock, MapPin,
+  User, Calendar, Star, ChevronRight
 } from "lucide-react";
 
 type Service = { id: number; name: string; price: number; duration: number; description: string | null };
@@ -257,14 +257,9 @@ export default function BookingPage() {
           </button>
         </div>
 
-        {/* Social */}
-        <div style={{ display: "flex", gap: 16, marginTop: 24 }}>
-          <a href="https://instagram.com/jpbarbearia" target="_blank" rel="noopener" style={{ color: `${MUTED}66` }}>
-            <Instagram style={{ width: 20, height: 20 }} />
-          </a>
-          <a href="tel:+551630101984" style={{ color: `${MUTED}66` }}>
-            <Phone style={{ width: 20, height: 20 }} />
-          </a>
+        {/* Logo footer */}
+        <div style={{ marginTop: 32, opacity: 0.3 }}>
+          <img src="/logo.png" alt="JP Barbearia" style={{ width: 40, height: 40, borderRadius: "50%" }} />
         </div>
       </div>
     </div>,

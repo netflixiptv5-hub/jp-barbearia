@@ -3,11 +3,11 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import {
   Scissors, ChevronLeft, Check, Clock, MapPin,
-  User, Calendar, Star, ChevronRight
+  User, Calendar, Star, ChevronRight, MessageCircle
 } from "lucide-react";
 
 type Service = { id: number; name: string; price: number; duration: number; description: string | null };
-type Barber = { id: number; name: string; photo: string | null };
+type Barber = { id: number; name: string; photo: string | null; phone: string | null };
 
 const DAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -175,9 +175,29 @@ export default function BookingPage() {
                 <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: 20, ...goldTextStyle }}>R$ {price.toFixed(2)}</span>
               </div>
             </div>
+            {/* WhatsApp button */}
+            {selBarber?.phone && (
+              <a
+                href={`https://wa.me/${selBarber.phone}?text=${encodeURIComponent(
+                  `Olá ${selBarber.name}! 👋\n\nAgendei pelo site:\n\n✂️ ${selSvc.map(s => s.name).join(", ")}\n📅 ${fmtDate(selDate)}\n🕐 ${selTime}\n👤 ${name}\n💰 R$ ${price.toFixed(2)}\n\nAté lá! 🤝`
+                )}`}
+                target="_blank"
+                rel="noopener"
+                style={{
+                  ...btnGoldStyle,
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                  width: "100%", padding: "16px 0", borderRadius: 16, fontSize: 15,
+                  marginTop: 32, textDecoration: "none",
+                  background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
+                  boxShadow: "0 4px 20px rgba(37,211,102,0.25), 0 1px 3px rgba(0,0,0,0.4)",
+                }}
+              >
+                <MessageCircle style={{ width: 20, height: 20 }} /> Enviar pro {selBarber.name} via WhatsApp
+              </a>
+            )}
             <button
               onClick={() => { setStep(0); setSelSvc([]); setSelBarber(null); setSelDate(""); setSelTime(""); setName(""); setPhone(""); setDone(false); }}
-              style={{ marginTop: 32, color: GOLD, fontSize: 14, fontWeight: 500, background: "none", border: "none", cursor: "pointer" }}
+              style={{ marginTop: 16, color: MUTED, fontSize: 13, fontWeight: 500, background: "none", border: "none", cursor: "pointer" }}
             >
               Novo agendamento
             </button>

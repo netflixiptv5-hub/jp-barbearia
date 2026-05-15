@@ -4,6 +4,7 @@ export const barbers = sqliteTable("barbers", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
   photo: text("photo").default(""),
+  phone: text("phone").default(""), // WhatsApp number e.g. 5516999999999
   pin: text("pin").notNull().default("0000"), // 4-digit PIN for barber login
   active: integer("active", { mode: "boolean" }).notNull().default(true),
   workDays: text("work_days").notNull().default("1,2,3,4,5,6"), // 0=dom, 1=seg...6=sab
